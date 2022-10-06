@@ -1,7 +1,10 @@
 # This example is provided for informational purposes only and has not been audited for security.
 from pyteal import *
+from algosdk.abi import Contract, NetworkInfo
 import json
 
+# / --- CONSTANTS --- /
+TESTNET_APP_ID = 114521775
 
 @Subroutine(TealType.none)
 def assert_sender_is_creator() -> Expr:
@@ -125,5 +128,13 @@ if __name__ == "__main__":
     with open("algobank_clear_state.teal", "w") as f:
         f.write(clear_state_program)
 
+    network = dict({"TestNet": NetworkInfo(TESTNET_APP_ID)})
+
+    contract_with_network = Contract(
+        name=contract.name,
+        methods=contract.methods,
+        desc=contract.desc,
+        networks=network,
+    )
     with open("algobank.json", "w") as f:
-        f.write(json.dumps(contract.dictify(), indent=4))
+        f.write(json.dumps(contract_with_network.dictify(), indent=4))
